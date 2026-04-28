@@ -1,0 +1,94 @@
+.TH CANBUS_MONITOR 1 "April 2026" "1.0.0" "User Commands"
+.SH NAME
+canbus_monitor \- Monitor and log CAN bus frames via SocketCAN
+.SH SYNOPSIS
+.B canbus_monitor
+[\fIOPTIONS\fR] \fIinterface\fR
+.SH DESCRIPTION
+.B canbus_monitor
+opens a raw SocketCAN socket on \fIinterface\fR and captures all CAN frames,
+writing them to rotating ASC-format log files compatible with CANalyzer and
+the \fBcantools\fR Python library.
+.PP
+Kernel-level receive filters can be configured to reduce CPU load by discarding
+unwanted frames before they are copied to user space.
+.SH OPTIONS
+.TP
+.BR \-o ", " \-\-output " " \fIdir\fR
+Directory for log files (default: \fB./canbus_logs\fR).
+.TP
+.BR \-p ", " \-\-prefix " " \fIname\fR
+Log file name prefix (default: interface name).
+.TP
+.BR \-s ", " \-\-max\-size " " \fIbytes\fR
+Rotate the current log file when it reaches this size in bytes
+(default: 52428800 = 50 MiB).
+.TP
+.BR \-r ", " \-\-rotations " " \fIn\fR
+Number of rotated log files to keep before deletion (default: 10).
+.TP
+.BR \-t ", " \-\-timeout " " \fIms\fR
+Socket receive timeout in milliseconds (default: 200).
+.TP
+.BR \-f ", " \-\-filter " " \fIid:mask\fR
+Add a kernel CAN receive filter.  Both \fIid\fR and \fImask\fR are
+hexadecimal.  A frame passes if \fB(frame.id & mask) == (id & mask)\fR.
+This option may be repeated up to 32 times.
+.TP
+.BR \-n ", " \-\-count " " \fIn\fR
+Exit after receiving \fIn\fR frames.  0 means run indefinitely (default).
+.TP
+.B \-\-stats
+Print per-ID statistics (frame count, byte count, DLC mean, inter-frame
+interval mean and standard deviation) on exit.
+.TP
+.BR \-v ", " \-\-verbose
+Print each received frame to stdout as it arrives.
+.TP
+.BR \-h ", " \-\-help
+Display usage information and exit.
+.TP
+.B \-\-version
+Display version information and exit.
+.SH SIGNALS
+.TP
+.BR SIGINT ", " SIGTERM
+Graceful shutdown: flush log buffers, optionally print statistics, and exit.
+.TP
+.B SIGHUP
+Trigger an immediate log rotation without terminating the process.
+.SH LOG FORMAT
+Log files use the ASC format (AUTOSAR/PEAK compatible subset):
+.PP
+.nf
+date Tue Apr 28 17:00:00 2026
+base hex  timestamps absolute
+no internal events logged
+   0.001234  1  1A0  Rx  d  4  01 02 03 04
+.fi
+.SH EXAMPLES
+Monitor all frames on can0:
+.PP
+.nf
+canbus_monitor can0
+.fi
+.PP
+Log only frames matching ID 0x100 (exact match), keep 5 rotations:
+.PP
+.nf
+canbus_monitor -f 100:7FF -r 5 -o /var/log/can can0
+.fi
+.PP
+Capture 10000 frames and print statistics:
+.PP
+.nf
+canbus_monitor -n 10000 --stats vcan0
+.fi
+.SH SEE ALSO
+.BR candump (1),
+.BR cansend (1),
+.BR ip (8)
+.SH AUTHOR
+Ahmad Rashed <ahmad.rashed93@gmail.com>
+.SH LICENSE
+GNU General Public License v3.0 or later.
