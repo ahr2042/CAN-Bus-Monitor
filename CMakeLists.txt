@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.18)
 
 project(canbus_monitor
     VERSION 1.0.0
-    DESCRIPTION "CAN Bus Monitor and Logger for Embedded Linux"
+    DESCRIPTION "CAN Bus Monitor and Logger"
     LANGUAGES C
 )
 
@@ -22,6 +22,9 @@ project(canbus_monitor
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
+
+# Linux-specific project: expose full POSIX + GNU extension symbols
+add_compile_definitions(_GNU_SOURCE)
 
 # ---------------------------------------------------------------------------
 # Compiler hardening flags
@@ -34,8 +37,10 @@ add_compile_options(
     -Wformat=2
     -Wconversion
     -Werror=implicit-function-declaration
-    $<$<CONFIG:Debug>:-g3 -fsanitize=address,undefined>
-    $<$<CONFIG:Release>:-O2 -DNDEBUG>
+    $<$<CONFIG:Debug>:-g3>
+    $<$<CONFIG:Debug>:-fsanitize=address,undefined>
+    $<$<CONFIG:Release>:-O2>
+    $<$<CONFIG:Release>:-DNDEBUG>
 )
 
 add_link_options(
@@ -67,7 +72,7 @@ target_include_directories(canbus_monitor
 
 # pthread is needed for log-flush thread; rt for clock_gettime on older glibc
 find_package(Threads REQUIRED)
-target_link_libraries(canbus_monitor PRIVATE Threads::Threads rt)
+target_link_libraries(canbus_monitor PRIVATE Threads::Threads rt m)
 
 # ---------------------------------------------------------------------------
 # Installation
@@ -90,7 +95,6 @@ add_subdirectory(tests)
 # ---------------------------------------------------------------------------
 set(CPACK_PACKAGE_NAME          "canbus-monitor")
 set(CPACK_PACKAGE_VERSION       ${PROJECT_VERSION})
-set(CPACK_PACKAGE_CONTACT       "ahmad.rashed93@gmail.com")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_DESCRIPTION})
 set(CPACK_GENERATOR             "TGZ;DEB")
 include(CPack)

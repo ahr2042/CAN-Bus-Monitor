@@ -16,8 +16,8 @@ set(UNITY_INC ${CMAKE_CURRENT_SOURCE_DIR}/unity)
 # ---------------------------------------------------------------------------
 # Helper macro to register a test executable
 # ---------------------------------------------------------------------------
-macro(add_canmon_test NAME SOURCES)
-    add_executable(${NAME} ${SOURCES} ${UNITY_SRC})
+macro(add_canmon_test NAME)
+    add_executable(${NAME} ${ARGN} ${UNITY_SRC})
     target_include_directories(${NAME}
         PRIVATE
             ${UNITY_INC}

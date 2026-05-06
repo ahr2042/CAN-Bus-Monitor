@@ -14,6 +14,7 @@
 #ifndef CANBUS_MONITOR_CAN_SOCKET_H
 #define CANBUS_MONITOR_CAN_SOCKET_H
 
+#include <stddef.h>      /* size_t */
 #include <stdint.h>
 #include <linux/can.h>   /* struct can_frame, canid_t */
 

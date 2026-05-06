@@ -1,11 +1,11 @@
 # canbus-monitor
 
-A professional **CAN Bus Monitor and Logger** for Embedded Linux, built on the
+**CAN Bus Monitor and Logger**, built on the
 Linux [SocketCAN](https://www.kernel.org/doc/html/latest/networking/can.html)
 subsystem. Captures CAN frames from any SocketCAN-compatible interface, writes
 rotating ASC-format log files, and reports per-ID bus statistics.
 
-**Project type:** Embedded Linux (project 1 of 3 in the rotation)  
+**Project type:** Linux (project 1 of 3 in the rotation)  
 **License:** GPL-3.0-or-later  
 **Language:** C11 — no proprietary dependencies
 
@@ -45,7 +45,7 @@ rotating ASC-format log files, and reports per-ID bus statistics.
                      │  ring buffer (SPSC, C11 atomics)
 ┌────────────────────▼────────────────────────────────────────────┐
 │               flush thread                                      │
-│   rb_pop() ──► fwrite() ASC lines ──► rotate file if needed    │
+│   rb_pop() ──► fwrite() ASC lines ──► rotate file if needed     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -81,7 +81,7 @@ sudo apt-get install can-utils
 
 ```bash
 # Clone the repo
-git clone https://github.com/<your-username>/canbus-monitor.git
+git clone https://github.com/ahr2042/canbus-monitor.git
 cd canbus-monitor
 
 # Debug build (with AddressSanitizer + UBSan)
